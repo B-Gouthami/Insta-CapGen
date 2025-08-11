@@ -16,6 +16,7 @@ Try it live here 👉 [Live Website](https://B-Gouthami.github.io/Insta-CapGen/)
 - CSS3
 - JavaScript (Vanilla)
 
+This was mainly created Using AI Websites Such as Claude and CodePen!!
 
 ## 🚀 Live Preview
 🔗 [Click to Try](https://B-Gouthami.github.io/Insta-CapGen/)
