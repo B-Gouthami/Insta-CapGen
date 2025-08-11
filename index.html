@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Caption Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d, #f56040, #f77737, #fcaf45, #ffdc80);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            background: linear-gradient(45deg, #405de6, #833ab4, #e1306c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: #405de6;
+            box-shadow: 0 0 0 3px rgba(64, 93, 230, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin: 30px 0;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .generate-btn {
+            background: linear-gradient(45deg, #405de6, #833ab4);
+            color: white;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(64, 93, 230, 0.3);
+        }
+
+        .copy-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .copy-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .copy-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .output {
+            background: #f8f9fa;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 150px;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #333;
+            white-space: pre-wrap;
+        }
+
+        .hashtag-count {
+            text-align: right;
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .mood-emoji {
+            font-size: 20px;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📸 Instagram Caption Generator</h1>
+        
+        <form id="captionForm">
+            <div class="form-group">
+                <label for="topic">Topic/Theme:</label>
+                <input type="text" id="topic" placeholder="e.g., sunset, coffee, workout, travel">
+            </div>
+
+            <div class="form-group">
+                <label for="mood">Mood/Tone:</label>
+                <select id="mood">
+                    <option value="motivational">🔥 Motivational</option>
+                    <option value="funny">😂 Funny</option>
+                    <option value="inspirational">✨ Inspirational</option>
+                    <option value="casual">😎 Casual</option>
+                    <option value="romantic">💕 Romantic</option>
+                    <option value="professional">💼 Professional</option>
+                    <option value="adventurous">🌟 Adventurous</option>
+                    <option value="grateful">🙏 Grateful</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="hashtags">Number of Hashtags:</label>
+                <select id="hashtags">
+                    <option value="5">5 hashtags</option>
+                    <option value="10" selected>10 hashtags</option>
+                    <option value="15">15 hashtags</option>
+                    <option value="20">20 hashtags</option>
+                    <option value="30">30 hashtags (max)</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="generate-btn" onclick="generateCaption()">Generate Caption</button>
+                <button type="button" class="copy-btn" id="copyBtn" onclick="copyCaption()" disabled>Copy Caption</button>
+            </div>
+        </form>
+
+        <div id="output" class="output">Your generated caption will appear here...</div>
+        <div id="hashtagCount" class="hashtag-count"></div>
+    </div>
+
+    <script>
+        const captionTemplates = {
+            motivational: [
+                "💪 Every day is a new opportunity to become the best version of yourself! {topic} reminds me that growth happens outside our comfort zone.",
+                "🔥 Success isn't just about what you accomplish, it's about what you inspire others to do. Today's {topic} session was exactly what I needed!",
+                "✨ The only impossible journey is the one you never begin. Grateful for moments like these with {topic}.",
+                "🌟 Your potential is endless. Don't let yesterday take up too much of today. {topic} vibes hitting different!",
+                "💯 Progress, not perfection. Every small step counts, just like this amazing {topic} experience."
+            ],
+            funny: [
+                "😂 Me: I'll just post one photo of {topic}. Also me: *posts 47 photos* No regrets!",
+                "🤪 Current mood: {topic} enthusiast with zero chill and maximum vibes!",
+                "😅 They say money can't buy happiness, but it can buy {topic}, and that's pretty much the same thing!",
+                "🙃 Warning: May contain traces of {topic} obsession and excessive emoji usage!",
+                "😆 Life status: Currently powered by {topic} and good vibes only!"
+            ],
+            inspirational: [
+                "✨ In a world where you can be anything, be kind. Today's {topic} moment reminded me of life's simple beauties.",
+                "🌈 Life isn't about waiting for the storm to pass, it's about learning to dance in the rain. {topic} teaches us that every day.",
+                "💫 Be yourself; everyone else is already taken. Embracing authenticity through {topic} and loving every moment.",
+                "🌸 Bloom where you are planted. Finding joy in {topic} and all the little things that make life magical.",
+                "🕊️ Peace begins with a smile. Sharing some {topic} love and positive energy with you all today."
+            ],
+            casual: [
+                "Just another day living my best life with some {topic} vibes ✌️",
+                "Current status: {topic} mode activated 😎 How's your day going?",
+                "Keeping it real with some quality {topic} time. Sometimes simple is best 🤷‍♀️",
+                "Weekend mood: {topic} and good company. What more do you need? 📸",
+                "No caption needed, just {topic} and good vibes all around 🙌"
+            ],
+            romantic: [
+                "💕 Love is in the details, and today's {topic} moment was pure magic with my favorite person.",
+                "💖 You're my favorite hello and hardest goodbye. {topic} dates like this make my heart full.",
+                "🌹 In your arms is where I belong. This {topic} adventure with you was absolutely perfect.",
+                "💝 Love isn't just something you feel, it's something you do. Grateful for {topic} moments like these.",
+                "💫 You + Me + {topic} = Perfect equation for happiness. Love you to the moon and back!"
+            ],
+            professional: [
+                "Excited to share insights from today's {topic} experience. Growth mindset in action! 💼",
+                "Professional development never stops. Today's {topic} session reinforced the importance of continuous learning.",
+                "Building excellence one day at a time. Grateful for {topic} opportunities that challenge and inspire.",
+                "Success is a journey, not a destination. Today's {topic} experience added valuable perspective to mine.",
+                "Investing in growth and development through {topic}. The best investment you can make is in yourself."
+            ],
+            adventurous: [
+                "🌟 Adventure awaits those who seek it! Today's {topic} expedition was absolutely incredible.",
+                "🗺️ Life is either a daring adventure or nothing at all. {topic} never disappoints when it comes to thrills!",
+                "⛰️ The best view comes after the hardest climb. This {topic} journey was worth every step!",
+                "🚀 Collect moments, not things. Another unforgettable {topic} adventure in the books!",
+                "🌍 Wanderlust and {topic} make the perfect combination for creating lifelong memories."
+            ],
+            grateful: [
+                "🙏 Gratitude turns what we have into enough. So thankful for {topic} moments like these.",
+                "💝 Blessed beyond measure. Today's {topic} experience reminded me of all life's gifts.",
+                "✨ Counting blessings, not problems. {topic} fills my heart with so much joy and appreciation.",
+                "🌻 Gratitude is the best attitude. Feeling incredibly blessed for {topic} and all the good in my life.",
+                "💛 Thankful heart, happy life. {topic} moments like this remind me how good life really is."
+            ]
+        };
+
+        const hashtagSets = {
+            general: ["#love", "#instagood", "#photooftheday", "#beautiful", "#happy", "#picoftheday", "#amazing", "#life", "#good", "#instadaily"],
+            motivational: ["#motivation", "#inspiration", "#goals", "#success", "#mindset", "#hustle", "#grind", "#nevergiveup", "#believeinyourself", "#determination"],
+            lifestyle: ["#lifestyle", "#vibes", "#mood", "#goodvibes", "#blessed", "#grateful", "#positivity", "#selfcare", "#mindfulness", "#balance"],
+            adventure: ["#adventure", "#explore", "#travel", "#wanderlust", "#journey", "#discover", "#experience", "#memories", "#freedom", "#outdoor"],
+            professional: ["#professional", "#career", "#growth", "#development", "#learning", "#leadership", "#teamwork", "#success", "#business", "#networking"]
+        };
+
+        function generateCaption() {
+            const topic = document.getElementById('topic').value || 'life';
+            const mood = document.getElementById('mood').value;
+            const hashtagCount = parseInt(document.getElementById('hashtags').value);
+
+            // Get random caption template
+            const templates = captionTemplates[mood];
+            const randomTemplate = templates[Math.floor(Math.random() * templates.length)];
+            const caption = randomTemplate.replace(/{topic}/g, topic);
+
+            // Generate hashtags
+            const hashtags = generateHashtags(topic, mood, hashtagCount);
+            
+            // Combine caption and hashtags
+            const fullCaption = caption + '\n\n' + hashtags;
+
+            // Display result
+            document.getElementById('output').textContent = fullCaption;
+            document.getElementById('copyBtn').disabled = false;
+            document.getElementById('hashtagCount').textContent = `${hashtagCount} hashtags included`;
+        }
+
+        function generateHashtags(topic, mood, count) {
+            let hashtags = [];
+            
+            // Add topic-related hashtags
+            hashtags.push(`#${topic.toLowerCase().replace(/\s+/g, '')}`);
+            hashtags.push(`#${topic.toLowerCase().replace(/\s+/g, '')}life`);
+            
+            // Add mood-specific hashtags
+            if (hashtagSets[mood]) {
+                hashtags = hashtags.concat(hashtagSets[mood].slice(0, Math.floor(count * 0.3)));
+            }
+            
+            // Add general popular hashtags
+            hashtags = hashtags.concat(hashtagSets.general.slice(0, Math.floor(count * 0.4)));
+            hashtags = hashtags.concat(hashtagSets.lifestyle.slice(0, Math.floor(count * 0.3)));
+            
+            // Remove duplicates and trim to requested count
+            hashtags = [...new Set(hashtags)].slice(0, count);
+            
+            // Fill remaining spots with additional relevant hashtags
+            const additionalTags = ["#instamood", "#followme", "#instacool", "#bestoftheday", "#smile", "#fun", "#instapic", "#igers", "#TagsForLikes", "#webstagram"];
+            while (hashtags.length < count && additionalTags.length > 0) {
+                const tag = additionalTags.shift();
+                if (!hashtags.includes(tag)) {
+                    hashtags.push(tag);
+                }
+            }
+            
+            return hashtags.join(' ');
+        }
+
+        function copyCaption() {
+            const output = document.getElementById('output');
+            const text = output.textContent;
+            
+            navigator.clipboard.writeText(text).then(function() {
+                const button = document.getElementById('copyBtn');
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.style.background = '#28a745';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '#28a745';
+                }, 2000);
+            }).catch(function(err) {
+                alert('Could not copy caption. Please select and copy manually.');
+            });
+        }
+
+        // Generate initial caption on page load
+        window.onload = function() {
+            generateCaption();
+        }
+    </script>
+</body>
+</html>
