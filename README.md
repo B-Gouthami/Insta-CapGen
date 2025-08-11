@@ -35,6 +35,6 @@ Try it live here 👉 [Live Website](https://B-Gouthami.github.io/Insta-CapGen/)
 ---
 
 ## 🤝 Connect
-- [LinkedIn]((https://www.linkedin.com/in/gouthami-boddepalli-788370305/))
+- [LinkedIn](https://www.linkedin.com/in/gouthami-boddepalli-788370305/)
 - [GitHub](https://github.com/B-Gouthami)
 
